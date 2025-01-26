@@ -2,48 +2,27 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Middleware to parse JSON and URL-encoded form data
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // For form submissions
+const items = ['Apple', 'Banana', 'Orange'];  // Initial items in the list
 
-// Serve static files from the "public" directory
-app.use(express.static('public'));
+app.use(express.json()); // Middleware to parse JSON bodies
 
-const items = ['Apple', 'Banana', 'Orange'];
-
-// API route to get items
+// Handle both GET and POST for the /items route
 app.get('/items', (req, res) => {
-    res.json(items);
+    res.json(items);  // Send current items as JSON
 });
 
-// API route to add items (e.g., via POST request)
 app.post('/items', (req, res) => {
-    const newItem = req.body.item; // Get the item from the request body
-    if (newItem) {
-        items.push(newItem); // Add the new item to the list
-    }
-    res.json(items); // Respond with the updated list
+    const newItem = req.body.item;  // Get the new item from the request body
+    items.push(newItem);  // Add the new item to the list
+    res.json(items);  // Return the updated list as JSON
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
+// Serve static files from the "public" folder
+app.use(express.static('public'));  // Make sure your HTML is inside the "public" folder
 
-// Logging middleware
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-});
-
-// Additional routes
+// Home route
 app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-app.get('/about', (req, res) => {
-    res.send('About Us');
+    res.send('Hello, World');
 });
 
 // Start the server
